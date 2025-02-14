@@ -95,7 +95,7 @@ export default function OrderPage() {
               <option value="wait">Kutilmoqda</option>
               <option value="cooking">Tayyorlanmoqda</option>
               <option value="courier">Kuryer</option>
-              <option value="done">Tayyor</option>
+              <option value="done">Tayyor (Saboy)</option>
               <option value="delivering">Yetkazilmoqda</option>
             </select>
           </div>

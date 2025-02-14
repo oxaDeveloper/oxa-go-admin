@@ -62,6 +62,8 @@ export default function Order({ order }) {
         return "bg-orange-500";
       case "courier":
         return "bg-red-500";
+      case "done":
+        return "bg-blue-500";
       case "delivering":
         return "bg-blue-500";
       default:
@@ -77,6 +79,8 @@ export default function Order({ order }) {
         return "Tayyorlanmoqda";
       case "courier":
         return "Kuryer";
+      case "done":
+        return "Tayyor";
       case "delivering":
         return "Yetkazilmoqda";
       default:
@@ -93,7 +97,7 @@ export default function Order({ order }) {
         newStatus = "cooking";
         break;
       case "cooking":
-        newStatus = "search_courier";
+        order?.soboy ? (newStatus = "done") : (newStatus = "search_courier");
         break;
       case "courier":
         newStatus = "delivering";
@@ -186,7 +190,9 @@ export default function Order({ order }) {
                 </div>
               </div>
 
-              <p className="sm:text-xl text-sm text-white">{orderProduct.count} ta</p>
+              <p className="sm:text-xl text-sm text-white">
+                {orderProduct.count} ta
+              </p>
               <div className="sm:min-w-44 max-sm:ml-2 grid justify-end">
                 <p className="sm:text-xl text-sm text-white">
                   {formatNumber((product.price || 0) * orderProduct.count)} so'm
@@ -199,14 +205,16 @@ export default function Order({ order }) {
           );
         })}
 
-        {order.status !== "delivering" && (
+        {order.status !== "delivering" && order.status !== "done" && (
           <div className="flex justify-end">
             <div
               className="flex items-center gap-2 bg-gray-900 cursor-pointer px-4 py-2 rounded-lg"
               onClick={handleStatusUpdate}
             >
               <span className="sm:text-lg text-sm text-white">
-                {order.status === "wait"
+                {order.status === "cooking" && order?.soboy
+                  ? "Tayyor (Saboy)"
+                  : order.status === "wait"
                   ? "Tayyorlash"
                   : order.status === "cooking"
                   ? "Kuryer chaqirish"
