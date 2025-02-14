@@ -23,8 +23,9 @@ export default function SettingsPage() {
     category: [],
     workTime: { opens: "", closes: "" },
     deliveryPrice: 0,
+    location: null,
   });
-  const [location, setLocation] = useState(undefined);
+  const [location, setLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -38,27 +39,25 @@ export default function SettingsPage() {
   ];
 
   useEffect(() => {
-    const updateLocation = async () => {
-      if (location === null) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-          if (position) {
-            setLocation({
-              lat: position.coords.latitude,
-              long: position.coords.longitude,
-            });
-          }
-        });
-      }
+    if (settings.location === null) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        if (position) {
+          setLocation({
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
+          });
+        }
+      });
+    }
+  }, [id]);
 
-      if (location && id) {
-        updateDoc(doc(db, "restaurants", id), {
-          location,
-        });
-      }
-    };
-
-    updateLocation();
-  });
+  const updateLocation = async () => {
+    if (location && id) {
+      updateDoc(doc(db, "restaurants", id), {
+        location,
+      });
+    }
+  };
 
   useEffect(() => {
     if (id !== undefined) {
@@ -82,8 +81,8 @@ export default function SettingsPage() {
                 closes: data.workTime?.closes || "",
               },
               deliveryPrice: data.deliveryPrice || 0,
+              location: data.location || null,
             });
-            setLocation(data.location);
           }
           setIsLoading(false);
         } catch (error) {
@@ -165,6 +164,8 @@ export default function SettingsPage() {
   };
 
   const handleSave = async () => {
+    updateLocation();
+
     try {
       setIsSaving(true);
       await updateDoc(doc(db, "restaurants", id), {
