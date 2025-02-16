@@ -212,9 +212,14 @@ export default function SettingsPage() {
                 <div className="flex-1 w-full h-[28rem] rounded-xl overflow-hidden relative">
                   <Label
                     htmlFor="banner-upload"
-                    className="absolute bg-gray-700 hover:bg-gray-600 p-2 rounded-lg right-2 top-2 cursor-pointer duration-200"
+                    className="absolute bg-gray-700 hover:bg-gray-600 p-2 rounded-lg right-2 top-2 cursor-pointer duration-200 flex items-center gap-2"
                   >
                     <Edit className="w-6 h-6 text-white" />
+                    {!settings?.banner && (
+                      <span className="text-white text-lg">
+                        {settings?.banner ? "O'zgartirish" : "Rasm o'rnating"}
+                      </span>
+                    )}
                   </Label>
                   <Input
                     id="banner-upload"
@@ -225,7 +230,7 @@ export default function SettingsPage() {
                     disabled={isSaving}
                   />
                   <img
-                    src={settings.banner}
+                    src={settings?.banner || "/images/placeholder.webp"}
                     alt="banner"
                     className="w-full h-full object-cover"
                   />

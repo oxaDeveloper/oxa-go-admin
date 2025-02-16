@@ -44,7 +44,7 @@ export default function TopProducts() {
         }
         const restaurantData = restaurantDoc.data();
         const menuMap = new Map(
-          restaurantData.menu.map((item) => [item.id, item.title])
+          restaurantData?.menu?.map((item) => [item.id, item.title])
         );
 
         // Create sorted product array
@@ -71,7 +71,9 @@ export default function TopProducts() {
 
   if (isLoading) {
     return (
-      <div className="bg-gray-800 rounded-xl p-6 text-white">Yuklanmoqda...</div>
+      <div className="bg-gray-800 rounded-xl p-6 text-white">
+        Yuklanmoqda...
+      </div>
     );
   }
 
