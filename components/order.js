@@ -34,6 +34,8 @@ export default function Order({ order }) {
     return () => unsubscribe();
   }, [order.restaurantId]);
 
+  console.log(order);
+
   const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
@@ -102,6 +104,9 @@ export default function Order({ order }) {
       case "courier":
         newStatus = "delivering";
         break;
+      case "done":
+        newStatus = "delivered";
+        break;
       default:
         return;
     }
@@ -167,45 +172,53 @@ export default function Order({ order }) {
         {order.products.map((orderProduct) => {
           const product = getProductDetails(orderProduct.id);
           return (
-            <div
-              key={orderProduct.id}
-              className="flex items-center justify-between"
-            >
-              <div className="flex items-center sm:gap-5 gap-2">
-                <Image
-                  src={product.img || "/placeholder.svg"}
-                  alt={product.title || "Product Image"}
-                  width={64}
-                  height={64}
-                  className="sm:w-16 sm:h-16 w-12 h-12 object-cover sm:rounded-xl rounded-md"
-                />
-
-                <div className="sm:min-w-44">
-                  <h1 className="sm:text-xl text-sm text-white">
-                    {product.title || "Unknown Product"}
-                  </h1>
-                  <h1 className="sm:text-base text-xs text-white/30">
-                    {product.category || "Uncategorized"}
+            <div key={orderProduct.id} className="grid w-full">
+              {order?.courier && order?.courier !== "" && (
+                <div className="flex justify-end items-center">
+                  <h1 className="text-white text-xl my-2 border-b">
+                    Kuryer: {order?.courier}
                   </h1>
                 </div>
-              </div>
+              )}
 
-              <p className="sm:text-xl text-sm text-white">
-                {orderProduct.count} ta
-              </p>
-              <div className="sm:min-w-44 max-sm:ml-2 grid justify-end">
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center sm:gap-5 gap-2">
+                  <Image
+                    src={product.img || "/placeholder.svg"}
+                    alt={product.title || "Product Image"}
+                    width={64}
+                    height={64}
+                    className="sm:w-16 sm:h-16 w-12 h-12 object-cover sm:rounded-xl rounded-md"
+                  />
+
+                  <div className="sm:min-w-44">
+                    <h1 className="sm:text-xl text-sm text-white">
+                      {product.title || "Unknown Product"}
+                    </h1>
+                    <h1 className="sm:text-base text-xs text-white/30">
+                      {product.category || "Uncategorized"}
+                    </h1>
+                  </div>
+                </div>
+
                 <p className="sm:text-xl text-sm text-white">
-                  {formatNumber((product.price || 0) * orderProduct.count)} so'm
+                  {orderProduct.count} ta
                 </p>
-                <p className="sm:text-base text-xs text-white/30">
-                  1 x {formatNumber(product.price || 0)} so'm
-                </p>
+                <div className="sm:min-w-44 max-sm:ml-2 grid justify-end">
+                  <p className="sm:text-xl text-sm text-white">
+                    {formatNumber((product.price || 0) * orderProduct.count)}{" "}
+                    so'm
+                  </p>
+                  <p className="sm:text-base text-xs text-white/30">
+                    1 x {formatNumber(product.price || 0)} so'm
+                  </p>
+                </div>
               </div>
             </div>
           );
         })}
 
-        {order.status !== "delivering" && order.status !== "done" && (
+        {order.status !== "delivering" && (
           <div className="flex justify-end">
             <div
               className="flex items-center gap-2 bg-gray-900 cursor-pointer px-4 py-2 rounded-lg"
@@ -218,7 +231,9 @@ export default function Order({ order }) {
                   ? "Tayyorlash"
                   : order.status === "cooking"
                   ? "Kuryer chaqirish"
-                  : order.status === "courier" && "Jo'natildi"}
+                  : order.status === "courier"
+                  ? "Jo'natildi"
+                  : order.status === "done" && "Mijozga berildi"}
               </span>
               <ArrowRight className="w-5 h-5" color="white" />
             </div>

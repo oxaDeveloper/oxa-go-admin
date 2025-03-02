@@ -12,6 +12,13 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import axios from "axios";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function SettingsPage() {
   const { id } = useUser();
@@ -23,6 +30,7 @@ export default function SettingsPage() {
     category: [],
     workTime: { opens: "", closes: "" },
     deliveryPrice: 0,
+    city: null,
     location: null,
   });
   const [location, setLocation] = useState(null);
@@ -39,16 +47,14 @@ export default function SettingsPage() {
   ];
 
   useEffect(() => {
-    if (settings.location === null) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        if (position) {
-          setLocation({
-            lat: position.coords.latitude,
-            long: position.coords.longitude,
-          });
-        }
-      });
-    }
+    navigator.geolocation.getCurrentPosition(function (position) {
+      if (position) {
+        setLocation({
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+        });
+      }
+    });
   }, [id]);
 
   const updateLocation = async () => {
@@ -81,6 +87,7 @@ export default function SettingsPage() {
                 closes: data.workTime?.closes || "",
               },
               deliveryPrice: data.deliveryPrice || 0,
+              city: data.city || null,
               location: data.location || null,
             });
           }
@@ -164,8 +171,6 @@ export default function SettingsPage() {
   };
 
   const handleSave = async () => {
-    updateLocation();
-
     try {
       setIsSaving(true);
       await updateDoc(doc(db, "restaurants", id), {
@@ -173,6 +178,7 @@ export default function SettingsPage() {
         category: settings.category,
         workTime: settings.workTime,
         deliveryPrice: Number(settings.deliveryPrice),
+        city: settings.city,
       });
       toast({
         title: "Success",
@@ -319,7 +325,41 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <div className="mt-8 flex justify-end">
+              <div className="flex-1 flex max-sm:flex-col justify-between items-center p-5 rounded-xl bg-gray-800 text-white border-gray-700 max-lg:gap-10 mt-4">
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="address" className="text-lg">
+                    Lokatsiya
+                  </Label>
+                  <Button
+                    onClick={updateLocation}
+                    className="bg-teal-500 hover:bg-teal-600"
+                  >
+                    O'zgartirish
+                  </Button>
+                </div>
+
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="city" className="text-lg">
+                    Shahar
+                  </Label>
+                  <Select
+                    value={settings.city || ""}
+                    onValueChange={(value) =>
+                      setSettings((prev) => ({ ...prev, city: value }))
+                    }
+                  >
+                    <SelectTrigger className="w-[180px] bg-gray-700 text-white border-gray-600">
+                      <SelectValue placeholder="Shahar tanlang" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-700 text-white border-gray-600">
+                      <SelectItem value="G'ijduvon">G'ijduvon</SelectItem>
+                      <SelectItem value="Vobkent">Vobkent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
                 <Button
                   onClick={handleSave}
                   disabled={isSaving}
