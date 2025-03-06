@@ -138,7 +138,7 @@ export default function Order({ order }) {
         className="flex items-center justify-between cursor-pointer md:gap-2 gap-5 max-md:flex-col"
         onClick={() => setIsProducts(!isProducts)}
       >
-        <div className="flex justify-between w-full">
+        <div className="flex justify-between max-md:w-full">
           <h1 className="lg:text-lg text-sm text-white lg:min-w-16 min-w-8 text-center">
             {order.secretCode}
           </h1>
