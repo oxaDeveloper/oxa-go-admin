@@ -36,7 +36,7 @@ export default function Sidebar({ setSidebar }) {
   };
 
   return (
-    <div className="w-64 h-screen bg-gray-900 text-gray-300 p-4 flex flex-col">
+    <div className="relative z-50 w-64 h-screen bg-gray-900 text-gray-300 p-4 flex flex-col">
       <div className="mb-8">
         <Image
           src="/images/logo_white.png"

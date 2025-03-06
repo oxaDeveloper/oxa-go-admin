@@ -34,8 +34,6 @@ export default function Order({ order }) {
     return () => unsubscribe();
   }, [order.restaurantId]);
 
-  console.log(order);
-
   const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
@@ -135,27 +133,41 @@ export default function Order({ order }) {
   };
 
   return (
-    <div className="flex flex-col bg-gray-800 hover:bg-gray-700 px-6 py-4 duration-200 rounded-lg">
+    <div className="flex flex-col bg-gray-800 hover:bg-gray-700 max-md:px-4 px-6 py-4 duration-200 rounded-lg">
       <div
         className="flex items-center justify-between cursor-pointer md:gap-2 gap-5 max-md:flex-col"
         onClick={() => setIsProducts(!isProducts)}
       >
-        <h1 className="lg:text-lg text-sm text-white lg:min-w-16 min-w-8 text-center">
-          {order.secretCode}
-        </h1>
+        <div className="flex justify-between w-full">
+          <h1 className="lg:text-lg text-sm text-white lg:min-w-16 min-w-8 text-center">
+            {order.secretCode}
+          </h1>
 
-        <div className="flex items-center gap-5 md:gap-20 2xl:gap-36 max-md:flex-col">
+          <h3
+            className={`md:hidden uppercase text-xs text-gray-800 ${getStatusColor(
+              order.status
+            )} rounded-lg lg:min-w-32 text-center py-1 px-3`}
+          >
+            {getStatusText(order.status)}
+          </h3>
+
+          <h2 className="md:hidden lg:text-lg text-sm text-white lg:min-w-32 text-center">
+            {formatTime(order.orderedAt)}
+          </h2>
+        </div>
+
+        <div className="flex items-center max-md:justify-between max-md:w-full gap-5 md:gap-20 2xl:gap-36">
           <h1 className="lg:text-lg text-sm text-white lg:min-w-32 text-center">
             +998{order.phoneNumber}
           </h1>
           <h2 className="lg:text-lg text-sm text-white lg:min-w-32 text-center">
             {formatNumber(order.price)} so'm
           </h2>
-          <h2 className="lg:text-lg text-sm text-white lg:min-w-32 text-center">
+          <h2 className="max-md:hidden lg:text-lg text-sm text-white lg:min-w-32 text-center">
             {formatTime(order.orderedAt)}
           </h2>
           <h3
-            className={`uppercase text-xs text-gray-800 ${getStatusColor(
+            className={`max-md:hidden uppercase text-xs text-gray-800 ${getStatusColor(
               order.status
             )} rounded-lg lg:min-w-32 text-center py-1`}
           >
@@ -168,7 +180,11 @@ export default function Order({ order }) {
         </div>
       </div>
 
-      <div className={`grid gap-4 pt-4 ${!isProducts && "hidden"}`}>
+      <div
+        className={`grid gap-4 pt-4 ${
+          !isProducts && "hidden"
+        } max-md:border-t max-md:mt-5`}
+      >
         {order.products.map((orderProduct) => {
           const product = getProductDetails(orderProduct.id);
           return (

@@ -109,8 +109,8 @@ export default function Product() {
 
       <main className="flex-1 p-8">
         <div className="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-            <div className="relative w-full sm:w-64">
+          <div className="max-lg:pt-12 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+            <div className="relative w-full sm:w-64 z-0">
               <Input
                 type="text"
                 placeholder="Mahsulotni qidirish"

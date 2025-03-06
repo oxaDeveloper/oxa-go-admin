@@ -36,6 +36,7 @@ export default function SettingsPage() {
   const [location, setLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSavingLocation, setIsSavingLocation] = useState(false);
 
   const categories = [
     "Fast-Food",
@@ -59,9 +60,17 @@ export default function SettingsPage() {
 
   const updateLocation = async () => {
     if (location && id) {
+      setIsSavingLocation(true);
       updateDoc(doc(db, "restaurants", id), {
         location,
-      });
+      })
+        .then(() => {
+          setIsSavingLocation(false);
+        })
+        .catch(() => {
+          alert("Xatolik");
+          setIsSavingLocation(false);
+        });
     }
   };
 
@@ -213,9 +222,9 @@ export default function SettingsPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-16">
-            <div className="w-full py-20">
+            <div className="w-full py-20 max-lg:pt-0">
               <div className="flex gap-10 max-lg:flex-col">
-                <div className="flex-1 w-full h-[28rem] rounded-xl overflow-hidden relative">
+                <div className="flex-1 w-full h-[30rem] rounded-xl overflow-hidden relative">
                   <Label
                     htmlFor="banner-upload"
                     className="absolute bg-gray-700 hover:bg-gray-600 p-2 rounded-lg right-2 top-2 cursor-pointer duration-200 flex items-center gap-2"
@@ -242,7 +251,7 @@ export default function SettingsPage() {
                   />
                 </div>
 
-                <div className="flex-1 flex flex-col justify-between p-5 pb-7 rounded-xl h-[28rem] bg-gray-800 text-white border-gray-700 max-lg:gap-10">
+                <div className="flex-1 flex flex-col justify-between p-5 pb-7 rounded-xl h-[30rem] bg-gray-800 text-white border-gray-700 max-lg:gap-10">
                   <div>
                     <Label htmlFor="name" className="text-lg">
                       Nomi
@@ -309,53 +318,44 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  <div>
-                    <Label htmlFor="deliveryPrice" className="text-lg">
-                      Yetkazib berish narxi (km)
+                  <div className="flex items-center gap-5">
+                    <Label htmlFor="city" className="text-lg">
+                      Shahar
                     </Label>
-                    <Input
-                      id="deliveryPrice"
-                      name="deliveryPrice"
-                      type="number"
-                      value={settings.deliveryPrice}
-                      onChange={handleInputChange}
-                      className="bg-gray-700 text-white border-gray-600 focus:border-teal-500"
-                    />
+                    <Select
+                      value={settings.city || ""}
+                      onValueChange={(value) =>
+                        setSettings((prev) => ({ ...prev, city: value }))
+                      }
+                    >
+                      <SelectTrigger className="w-[180px] bg-gray-700 text-white border-gray-600">
+                        <SelectValue placeholder="Shahar tanlang" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-700 text-white border-gray-600">
+                        <SelectItem value="G'ijduvon">G'ijduvon</SelectItem>
+                        <SelectItem value="Vobkent">Vobkent</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                </div>
-              </div>
 
-              <div className="flex-1 flex max-sm:flex-col justify-between items-center p-5 rounded-xl bg-gray-800 text-white border-gray-700 max-lg:gap-10 mt-4">
-                <div className="flex items-center gap-5">
-                  <Label htmlFor="address" className="text-lg">
-                    Lokatsiya
-                  </Label>
-                  <Button
-                    onClick={updateLocation}
-                    className="bg-teal-500 hover:bg-teal-600"
-                  >
-                    O'zgartirish
-                  </Button>
-                </div>
-
-                <div className="flex items-center gap-5">
-                  <Label htmlFor="city" className="text-lg">
-                    Shahar
-                  </Label>
-                  <Select
-                    value={settings.city || ""}
-                    onValueChange={(value) =>
-                      setSettings((prev) => ({ ...prev, city: value }))
-                    }
-                  >
-                    <SelectTrigger className="w-[180px] bg-gray-700 text-white border-gray-600">
-                      <SelectValue placeholder="Shahar tanlang" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-700 text-white border-gray-600">
-                      <SelectItem value="G'ijduvon">G'ijduvon</SelectItem>
-                      <SelectItem value="Vobkent">Vobkent</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex items-center gap-5">
+                    <Label htmlFor="address" className="text-lg">
+                      Lokatsiya
+                    </Label>
+                    <Button
+                      onClick={updateLocation}
+                      className="bg-teal-500 hover:bg-teal-600"
+                    >
+                      {isSavingLocation ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          O'zgartirish
+                        </>
+                      ) : (
+                        "O'zgartirish"
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
 
