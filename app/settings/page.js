@@ -222,9 +222,9 @@ export default function SettingsPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-16">
-            <div className="w-full py-20 max-lg:pt-0">
+            <div className="w-full py-20 max-lg:py-0">
               <div className="flex gap-10 max-lg:flex-col">
-                <div className="flex-1 w-full h-[30rem] rounded-xl overflow-hidden relative">
+                <div className="flex-1 w-full h-[30rem] rounded-xl overflow-hidden relative z-0">
                   <Label
                     htmlFor="banner-upload"
                     className="absolute bg-gray-700 hover:bg-gray-600 p-2 rounded-lg right-2 top-2 cursor-pointer duration-200 flex items-center gap-2"

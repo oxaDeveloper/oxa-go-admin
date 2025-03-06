@@ -22,14 +22,14 @@ export default function RootLayout({ children }) {
             </div>
             {sidebar && (
               <div
-                className="absolute top-7 right-7 hidden max-lg:block z-10"
+                className="absolute top-7 right-7 hidden max-lg:block z-50"
                 onClick={() => setSidebar(false)}
               >
                 <X className="w-8 h-8" color="white" />
               </div>
             )}
             <div
-              className={`max-lg:absolute max-lg:w-full max-lg:bg-black max-lg:bg-opacity-75 ${
+              className={`max-lg:absolute max-lg:w-full max-lg:bg-black max-lg:bg-opacity-75 z-40 ${
                 !sidebar && "max-lg:hidden"
               }`}
             >
