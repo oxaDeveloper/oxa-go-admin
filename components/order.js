@@ -191,7 +191,7 @@ export default function Order({ order }) {
             <div key={orderProduct.id} className="grid w-full">
               {order?.courier && order?.courier !== "" && (
                 <div className="flex justify-end items-center">
-                  <h1 className="text-white text-xl my-2 border-b">
+                  <h1 className="text-white text-md my-2 border-b">
                     Kuryer: {order?.courier}
                   </h1>
                 </div>
