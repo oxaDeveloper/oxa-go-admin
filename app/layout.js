@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className={`bg-gray-900 ${sidebar && "overflow-hidden"}`}>
+      <body className={`bg-gray-900`}>
         <UserProvider>
           <div className="flex min-h-screen">
             <div
