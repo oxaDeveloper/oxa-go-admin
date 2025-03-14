@@ -42,7 +42,7 @@ export default function SettingsPage() {
     "Fast-Food",
     "Milliy taomlar",
     "Go'shtli taomlar",
-    "Dorixona",
+    "Market",
     "Texnikalar",
     "Shirinliklar",
   ];
@@ -333,7 +333,6 @@ export default function SettingsPage() {
                       </SelectTrigger>
                       <SelectContent className="bg-gray-700 text-white border-gray-600">
                         <SelectItem value="G'ijduvon">G'ijduvon</SelectItem>
-                        <SelectItem value="Vobkent">Vobkent</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
