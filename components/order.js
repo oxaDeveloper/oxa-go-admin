@@ -177,7 +177,7 @@ export default function Order({ order }) {
             +998{order.phoneNumber}
           </h1>
           <h2 className="lg:text-lg text-sm text-white lg:min-w-32 text-center">
-            {formatNumber(order.price + order.servicePrice)} so'm
+            {formatNumber(order.price + (order.servicePrice || 0))} so'm
           </h2>
           <h2 className="max-md:hidden lg:text-lg text-sm text-white lg:min-w-32 text-center">
             {formatTime(order.orderedAt)}
