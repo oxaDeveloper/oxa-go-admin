@@ -97,6 +97,10 @@ export default function StatsCards() {
               { id: "4", value: totalRevenue },
             ]);
           } else {
+            setStats((prevStats) => [
+              ...prevStats.filter((stat) => stat.id !== "4"),
+              { id: "4", value: 0 },
+            ]);
             console.log("No matching document in servicePrice collection.");
           }
         },
