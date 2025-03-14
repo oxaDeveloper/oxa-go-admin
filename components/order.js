@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { doc, getDoc, increment, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase.config";
 
 export default function Order({ order }) {
@@ -90,6 +90,9 @@ export default function Order({ order }) {
 
   const handleStatusUpdate = async () => {
     const orderRef = doc(db, "orders", order.id);
+    const servicePriceRef = doc(db, "servicePrice", order.restaurantId);
+    const serviceDocSnap = await getDoc(servicePriceRef);
+
     let newStatus;
 
     switch (order.status) {
@@ -112,7 +115,20 @@ export default function Order({ order }) {
     try {
       await updateDoc(orderRef, {
         status: newStatus,
+      }).then(async () => {
+        if (order.status === "wait") {
+          if (serviceDocSnap.exists()) {
+            await updateDoc(servicePriceRef, {
+              price: increment(order?.servicePrice),
+            });
+          } else {
+            await setDoc(servicePriceRef, {
+              price: order?.servicePrice,
+            });
+          }
+        }
       });
+
       console.log("Order status updated successfully");
     } catch (error) {
       console.error("Error updating order status:", error);
@@ -161,7 +177,7 @@ export default function Order({ order }) {
             +998{order.phoneNumber}
           </h1>
           <h2 className="lg:text-lg text-sm text-white lg:min-w-32 text-center">
-            {formatNumber(order.price)} so'm
+            {formatNumber(order.price + order.servicePrice)} so'm
           </h2>
           <h2 className="max-md:hidden lg:text-lg text-sm text-white lg:min-w-32 text-center">
             {formatTime(order.orderedAt)}
@@ -181,9 +197,8 @@ export default function Order({ order }) {
       </div>
 
       <div
-        className={`grid gap-4 pt-4 ${
-          !isProducts && "hidden"
-        } max-md:border-t max-md:mt-5`}
+        className={`grid gap-4 pt-4 ${!isProducts && "hidden"
+          } max-md:border-t max-md:mt-5`}
       >
         {order.products.map((orderProduct) => {
           const product = getProductDetails(orderProduct.id);
@@ -244,12 +259,12 @@ export default function Order({ order }) {
                 {order.status === "cooking" && order?.soboy
                   ? "Tayyor (Saboy)"
                   : order.status === "wait"
-                  ? "Tayyorlash"
-                  : order.status === "cooking"
-                  ? "Kuryer chaqirish"
-                  : order.status === "courier"
-                  ? "Jo'natildi"
-                  : order.status === "done" && "Mijozga berildi"}
+                    ? "Tayyorlash"
+                    : order.status === "cooking"
+                      ? "Kuryer chaqirish"
+                      : order.status === "courier"
+                        ? "Jo'natildi"
+                        : order.status === "done" && "Mijozga berildi"}
               </span>
               <ArrowRight className="w-5 h-5" color="white" />
             </div>

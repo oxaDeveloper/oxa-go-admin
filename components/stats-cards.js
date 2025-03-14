@@ -86,28 +86,26 @@ export default function StatsCards() {
       unsubscribes.push(activeOrdersUnsubscribe);
 
       // Total revenue listener
-      const totalRevenueQuery = query(
-        collection(db, "orders"),
-        where("restaurantId", "==", id),
-        where("status", "==", "delivered")
-      );
+      const totalRevenueQuery = doc(db, "servicePrice", id);
       const totalRevenueUnsubscribe = onSnapshot(
         totalRevenueQuery,
-        (querySnapshot) => {
-          const totalRevenue = querySnapshot.docs.reduce((total, doc) => {
-            const orderData = doc.data();
-            return total + (orderData.price || 0);
-          }, 0);
-          setStats((prevStats) => [
-            ...prevStats.filter((stat) => stat.id !== "4"),
-            { id: "4", value: totalRevenue },
-          ]);
+        (docSnap) => {
+          if (docSnap.exists()) {
+            const totalRevenue = docSnap.data().price || 0;
+            setStats((prevStats) => [
+              ...prevStats.filter((stat) => stat.id !== "4"),
+              { id: "4", value: totalRevenue },
+            ]);
+          } else {
+            console.log("No matching document in servicePrice collection.");
+          }
         },
         (error) => {
           console.error("Error fetching total revenue:", error);
           setError("Error fetching total revenue. Please try again later.");
         }
       );
+
       unsubscribes.push(totalRevenueUnsubscribe);
 
       setLoading(false);
@@ -142,7 +140,7 @@ export default function StatsCards() {
       case 2:
         return "Faol buyurtmalar";
       default:
-        return "Daromad";
+        return "Servis to'lovi";
     }
   };
 
@@ -179,26 +177,24 @@ export default function StatsCards() {
             <div key={data.id} className="bg-gray-800 p-6 rounded-xl">
               <div className="flex items-center justify-between mb-4">
                 <div
-                  className={`p-2 ${
-                    color === "orange"
-                      ? "bg-orange-500/10"
-                      : color === "blue"
+                  className={`p-2 ${color === "orange"
+                    ? "bg-orange-500/10"
+                    : color === "blue"
                       ? "bg-blue-500/10"
                       : color === "purple"
-                      ? "bg-purple-500/10"
-                      : "bg-teal-500/10"
-                  } rounded-lg`}
+                        ? "bg-purple-500/10"
+                        : "bg-teal-500/10"
+                    } rounded-lg`}
                 >
                   <div
-                    className={`w-8 h-8 ${
-                      color === "orange"
-                        ? "bg-orange-500"
-                        : color === "blue"
+                    className={`w-8 h-8 ${color === "orange"
+                      ? "bg-orange-500"
+                      : color === "blue"
                         ? "bg-blue-500"
                         : color === "purple"
-                        ? "bg-purple-500"
-                        : "bg-teal-500"
-                    } rounded-lg flex items-center justify-center`}
+                          ? "bg-purple-500"
+                          : "bg-teal-500"
+                      } rounded-lg flex items-center justify-center`}
                   >
                     <Icon className="w-5 h-5 text-gray-800" />
                   </div>
@@ -207,9 +203,8 @@ export default function StatsCards() {
 
               <div>
                 <h3
-                  className={`${
-                    data.value.toString().length > 15 ? "text-2xl" : "text-3xl"
-                  } font-bold text-white`}
+                  className={`${data.value.toString().length > 15 ? "text-2xl" : "text-3xl"
+                    } font-bold text-white`}
                 >
                   {formatNumber(data.value)}
                 </h3>
