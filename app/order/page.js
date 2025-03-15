@@ -13,14 +13,17 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { db } from "@/firebase.config";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function OrderPage() {
   const { id } = useUser();
   const router = useRouter();
   const [orders, setOrders] = useState([]);
+  const [prevOrdersCount, setPrevOrdersCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("wait");
   const [error, setError] = useState(null);
+  const [audioEnabled, setAudioEnabled] = useState(false);
 
   const today = new Date().toJSON().slice(0, 10).replace(/-/g, " / ");
 
@@ -51,6 +54,13 @@ export default function OrderPage() {
             ...doc.data(),
           }))
           .filter((order) => order.status !== "delivered");
+
+        if (ordersData.length > prevOrdersCount && audioEnabled) {
+          const audio = new Audio("/sound/new_order.mp3");
+          audio.play().catch((error) => console.log("Audio play blocked:", error));
+        }
+        setPrevOrdersCount(ordersData.length);
+
         setOrders(ordersData);
         setLoading(false);
       },
@@ -62,7 +72,18 @@ export default function OrderPage() {
     );
 
     return () => unsubscribe();
-  }, [id, router]);
+  }, [id, router, prevOrdersCount, audioEnabled]);
+
+  // Enable sound after user interaction
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      setAudioEnabled(true);
+      document.removeEventListener("click", handleUserInteraction);
+    };
+
+    document.addEventListener("click", handleUserInteraction);
+    return () => document.removeEventListener("click", handleUserInteraction);
+  }, []);
 
   if (id === null || id === undefined) {
     return <div className="flex-1 p-8 text-white">Loading user data...</div>;
@@ -84,20 +105,20 @@ export default function OrderPage() {
 
       <main className="flex-1 px-8 py-[22px]">
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-2 bg-gray-800 px-4 py-2.5 rounded-lg cursor-pointer max-lg:ml-12">
+          <div className="flex items-center gap-2 bg-gray-800 px-4 py-1 rounded-lg cursor-pointer max-lg:ml-12">
             <Filter className="w-5 h-5" color="white" />
-            <select
-              name="filter"
-              className="bg-transparent text-white text-lg outline-none"
-              onChange={(e) => setFilter(e.target.value)}
-              value={filter}
-            >
-              <option value="wait">Kutilmoqda</option>
-              <option value="cooking">Tayyorlanmoqda</option>
-              <option value="courier">Kuryer</option>
-              <option value="done">Tayyor (Saboy)</option>
-              <option value="delivering">Yetkazilmoqda</option>
-            </select>
+            <Select onValueChange={setFilter} value={filter}>
+              <SelectTrigger className="w-full sm:w-[180px] bg-transparent outline-none text-white border-none text-lg">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent className="bg-gray-800 text-white border-gray-700 text-lg outline-none">
+                <SelectItem value="wait">Kutilmoqda</SelectItem>
+                <SelectItem value="cooking">Tayyorlanmoqda</SelectItem>
+                <SelectItem value="courier">Kuryer</SelectItem>
+                <SelectItem value="done">Tayyor (Saboy)</SelectItem>
+                <SelectItem value="delivering">Yetkazilmoqda</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="text-gray-400 hover:text-white cursor-pointer items-center gap-2 duration-200 sm:flex hidden">
