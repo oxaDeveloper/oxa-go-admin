@@ -5,7 +5,7 @@ import { doc, getDoc, increment, onSnapshot, setDoc, updateDoc } from "firebase/
 import { db } from "@/firebase.config";
 
 export default function Order({ order }) {
-  const [isProducts, setIsProducts] = useState(false);
+  const [isProducts, setIsProducts] = useState(true);
   const [restaurantMenu, setRestaurantMenu] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
